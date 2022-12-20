@@ -23,7 +23,7 @@ def part2(text_input):
 
 
 def run(input_path):
-    print("Day 1 : Calorie Counting")
+    print("Day  1: Calorie Counting")
     with open(input_path) as f:
         content = f.read()
     print("Part 1:", part1(content))

@@ -57,7 +57,7 @@ def part2(text_input):
 
 
 def run(input_path):
-    print("Day 2 : Rock Paper Scissors")
+    print("Day  2: Rock Paper Scissors")
     with open(input_path) as f:
         content = f.read()
     print("Part 1:", part1(content))
