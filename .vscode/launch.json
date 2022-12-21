@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "AoC: run on test input",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/solve.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ["--day", "3", "--test"]
+        },
+        {
+            "name": "AoC: run on task input",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/solve.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ["--day", "3"]
+        }
+    ]
+}
