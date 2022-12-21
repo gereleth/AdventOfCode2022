@@ -38,7 +38,7 @@ if __name__ == "__main__":
         if args.day is not None:
             days = [args.day]
         else:
-            days = list(range(1, 3)) + [21]
+            days = list(range(1, 5)) + [21]
         for day in days:
             if args.test:
                 args.input = f"inputs/day{day}/test.txt"
