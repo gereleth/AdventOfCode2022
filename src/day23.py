@@ -27,11 +27,12 @@ def parse_board(text):
     lines = text.split("\n")
     H = len(lines)
     W = len(lines[0])
-    board = np.zeros((2 + H, 2 + W), dtype=np.int8)
+    padding = 30
+    board = np.zeros((2 * padding + H, 2 * padding + W), dtype=np.int8)
     for y, line in enumerate(lines):
         for x, char in enumerate(line):
             if char == "#":
-                board[1 + y, 1 + x] = ELF
+                board[padding + y, padding + x] = ELF
     return board
 
 
