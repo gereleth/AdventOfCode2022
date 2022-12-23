@@ -2,6 +2,10 @@
 # Problem statement: https://adventofcode.com/2022/day/22
 
 import numpy as np
+from matplotlib import pyplot as plt
+import matplotlib.animation as animation
+from matplotlib.patches import Rectangle
+from matplotlib.collections import PatchCollection
 import re
 
 EMPTY = 0
@@ -26,6 +30,22 @@ Y = "y"
 Z = "z"
 
 
+class WrappingBoard:
+    def __init__(self, board):
+        self.board = board
+        # find out cube side length
+        self.size = int(np.sqrt((board != VOID).sum() // 6))
+
+    def whats_ahead(self, x, y, direction):
+        dy, dx = DELTAS[direction]
+        nx = (x + dx) % self.board.shape[1]
+        ny = (y + dy) % self.board.shape[0]
+        while self.board[ny, nx] == VOID:
+            nx = (nx + self.size * dx) % self.board.shape[1]
+            ny = (ny + self.size * dy) % self.board.shape[0]
+        return nx, ny, direction, self.board[ny, nx]
+
+
 def parse_board(text):
     lines = text.split("\n")
     H = len(lines)
@@ -41,13 +61,14 @@ def parse_board(text):
     return board
 
 
-def part1(text_input):
-    board, moves = text_input.split("\n\n")
-    board = parse_board(board)
+def follow_path(geometry, moves, return_path=False):
     y = 0
-    x = next(i for i, cell in enumerate(board[0]) if cell == EMPTY)
+    x = next(i for i, cell in enumerate(geometry.board[0]) if cell == EMPTY)
     direction = RIGHT
     moves = re.findall(r"(\d+|L|R)", moves.strip())
+    if return_path:
+        xx = [x]
+        yy = [y]
     for move in moves:
         if move == "L":
             direction = (direction - 1) % 4
@@ -55,22 +76,21 @@ def part1(text_input):
             direction = (direction + 1) % 4
         else:
             steps = int(move)
-            dy, dx = DELTAS[direction]
             for _ in range(steps):
-                nx = x
-                ny = y
-                while True:
-                    nx = (nx + dx) % board.shape[1]
-                    ny = (ny + dy) % board.shape[0]
-                    next_cell = board[ny, nx]
-                    if next_cell != VOID:
-                        break
+                nx, ny, ndirection, next_cell = geometry.whats_ahead(x, y, direction)
                 if next_cell == EMPTY:
                     x = nx
                     y = ny
+                    direction = ndirection
+                    if return_path:
+                        xx.append(x)
+                        yy.append(y)
                 elif next_cell == WALL:
                     break
-    return 1000 * (y + 1) + 4 * (x + 1) + direction
+    if return_path:
+        return xx, yy
+    else:
+        return x, y, direction
 
 
 class Cube:
@@ -140,78 +160,135 @@ class Cube:
             other_sign = other_face["edges"][RIGHT][1] - other_face["edges"][LEFT][1]
         return other_face_index, other_direction, sign != other_sign
 
-    def which_face(self, x, y):
+    def whats_ahead(self, x, y, direction):
+        dy, dx = DELTAS[direction]
+        nx = x + dx
+        ny = y + dy
+        ndir = direction
+        if nx < 0 or nx >= self.board.shape[1] or ny < 0 or ny >= self.board.shape[0]:
+            # tried to go out of bounds
+            next_cell = VOID
+        else:
+            next_cell = self.board[ny, nx]
+        if next_cell != VOID:
+            return nx, ny, ndir, next_cell
+        # stepped into the void, have to wrap around
         coord = (y // self.size, x // self.size)
-        return self.loc_to_face[coord]
+        face = self.loc_to_face[coord]
+        wrap_face, wrap_direction, wrap_switch = self.wrap(face, direction)
+        if direction in (UP, DOWN):
+            source_coord = x - self.size * self.faces[face]["x"]
+        else:
+            source_coord = y - self.size * self.faces[face]["y"]
+        if wrap_switch:
+            source_coord = self.size - 1 - source_coord
+        wy = self.size * self.faces[wrap_face]["y"]
+        wx = self.size * self.faces[wrap_face]["x"]
+        ndir = wrap_direction
+        if wrap_direction == RIGHT:
+            nx = wx
+            ny = wy + source_coord
+        elif wrap_direction == DOWN:
+            nx = wx + source_coord
+            ny = wy
+        elif wrap_direction == LEFT:
+            nx = wx + self.size - 1
+            ny = wy + source_coord
+        elif wrap_direction == UP:
+            nx = wx + source_coord
+            ny = wy + self.size - 1
+        else:
+            raise ValueError("unknown wrap direction")
+        next_cell = self.board[ny, nx]
+        return nx, ny, ndir, next_cell
 
-    def face_origin(self, face_index):
-        wy = self.size * self.faces[face_index]["y"]
-        wx = self.size * self.faces[face_index]["x"]
-        return wy, wx
+
+def part1(text_input):
+    board, moves = text_input.split("\n\n")
+    board = parse_board(board)
+    geometry = WrappingBoard(board)
+    x, y, direction = follow_path(geometry, moves)
+    return 1000 * (y + 1) + 4 * (x + 1) + direction
 
 
 def part2(text_input):
     board, moves = text_input.split("\n\n")
     board = parse_board(board)
-    cube = Cube(board)
-    y = 0
-    x = next(i for i, cell in enumerate(board[0]) if cell == EMPTY)
-    direction = RIGHT
-    moves = re.findall(r"(\d+|L|R)", moves.strip())
-    for move in moves:
-        if move == "L":
-            direction = (direction - 1) % 4
-        elif move == "R":
-            direction = (direction + 1) % 4
-        else:
-            steps = int(move)
-            dy, dx = DELTAS[direction]
-            for _ in range(steps):
-                nx = x + dx
-                ny = y + dy
-                ndir = direction
-                if nx < 0 or nx >= board.shape[1] or ny < 0 or ny >= board.shape[0]:
-                    # tried to go out of bounds
-                    next_cell = VOID
-                else:
-                    next_cell = board[ny, nx]
-                if next_cell == VOID:
-                    # have to wrap around
-                    face = cube.which_face(x, y)
-                    wrap_face, wrap_direction, wrap_switch = cube.wrap(face, direction)
-                    if direction in (UP, DOWN):
-                        source_coord = x - cube.size * cube.faces[face]["x"]
-                    else:
-                        source_coord = y - cube.size * cube.faces[face]["y"]
-                    if wrap_switch:
-                        source_coord = cube.size - 1 - source_coord
-                    wy, wx = cube.face_origin(wrap_face)
-                    ndir = wrap_direction
-                    if wrap_direction == RIGHT:
-                        nx = wx
-                        ny = wy + source_coord
-                    elif wrap_direction == DOWN:
-                        nx = wx + source_coord
-                        ny = wy
-                    elif wrap_direction == LEFT:
-                        nx = wx + cube.size - 1
-                        ny = wy + source_coord
-                    elif wrap_direction == UP:
-                        nx = wx + source_coord
-                        ny = wy + cube.size - 1
-                    else:
-                        raise ValueError("unknown wrap direction")
-                    next_cell = board[ny, nx]
-                if next_cell == EMPTY:
-                    x = nx
-                    y = ny
-                    direction = ndir
-                    dy, dx = DELTAS[direction]
-                elif next_cell == WALL:
-                    break
-                else:
-                    raise ValueError("got void cell after wrapping")
+    geometry = Cube(board)
+    x, y, direction = follow_path(geometry, moves)
     return 1000 * (y + 1) + 4 * (x + 1) + direction
+
+
+def visualize(text_input):
+    board, moves = text_input.split("\n\n")
+    board = parse_board(board)
+    geometry = Cube(board)
+    xx, yy = follow_path(geometry, moves, return_path=True)
+    x_cube = np.array(xx)
+    y_cube = np.array(yy)
+
+    geometry = WrappingBoard(board)
+    xx, yy = follow_path(geometry, moves, return_path=True)
+    x_wrap = np.array(xx)
+    y_wrap = np.array(yy)
+
+    fig, ax = plt.subplots(figsize=(12, 16), facecolor="black")
+    ax.axis("off")
+    ax.set(facecolor="black")
+    b = np.zeros_like(board)
+    b[board == VOID] = -10
+    b[board == EMPTY] = 10
+    b[board == WALL] = 4
+    ax.imshow(b, cmap="gray", vmax=15)
+    (line_wrap,) = ax.plot(
+        x_wrap[:10], y_wrap[:10], color="C0", zorder=10, lw=0, marker="o", ms=12
+    )
+    (line_cube,) = ax.plot(
+        x_cube[:10], y_cube[:10], color="C3", zorder=10, lw=0, marker="o", ms=12
+    )
+    # Show where cube sides wrap
+    # Patches are specific to my task input
+    # I was too lazy to draw them in a general way
+    # patches = [
+    #     Rectangle((50 - 0.5, 0 - 0.5 - 3), 50, 3, color="C0"),
+    #     Rectangle((-3 - 0.5, 150 - 0.5), 3, 50, color="C0"),
+    #     Rectangle((50 - 3 - 0.5, 0 - 0.5), 3, 50, color="C1"),
+    #     Rectangle((-3 - 0.5, 100 - 0.5), 3, 50, color="C1"),
+    #     Rectangle((50 - 3 - 0.5, 50 - 0.5), 3, 50, color="C2"),
+    #     Rectangle((0 - 0.5, 100 - 0.5 - 3), 50, 3, color="C2"),
+    #     Rectangle((100 - 0.5, 0 - 0.5 - 3), 50, 3, color="C3"),
+    #     Rectangle((0 - 0.5, 200 - 0.5), 50, 3, color="C3"),
+    #     Rectangle((150 - 0.5, 0 - 0.5), 3, 50, color="C4"),
+    #     Rectangle((100 - 0.5, 100 - 0.5), 3, 50, color="C4"),
+    #     Rectangle((100 - 0.5, 50 - 0.5), 3, 50, color="C2"),
+    #     Rectangle((100 - 0.5, 50 - 0.5), 50, 3, color="C2"),
+    #     Rectangle((50 - 0.5, 150 - 0.5), 3, 50, color="C2"),
+    #     Rectangle((50 - 0.5, 150 - 0.5), 50, 3, color="C2"),
+    # ]
+    # ax.add_collection(PatchCollection(patches, match_original=True))
+    ax.autoscale_view()
+
+    def animate(i):
+        line_wrap.set(
+            xdata=x_wrap[max(0, i - 20) : min(i, len(x_wrap))],
+            ydata=y_wrap[max(0, i - 20) : min(i, len(x_wrap))],
+        )  # update the data.
+        line_cube.set(
+            xdata=x_cube[max(0, i - 20) : min(i, len(x_cube))],
+            ydata=y_cube[max(0, i - 20) : min(i, len(x_cube))],
+        )
+        return (
+            line_wrap,
+            line_cube,
+        )
+
+    fig.tight_layout()
+    ani = animation.FuncAnimation(fig, animate, interval=10, blit=True, save_count=2000)
+
+    writer = animation.FFMpegWriter(fps=30, metadata=dict(artist="me"), bitrate=1800)
+    ani.save("day_22.mp4", writer=writer)
+
+    plt.show()
 
 
 def run(input_path):
@@ -220,3 +297,4 @@ def run(input_path):
         content = f.read()
     print("Part 1:", part1(content))
     print("Part 2:", part2(content))
+    # visualize(content)
