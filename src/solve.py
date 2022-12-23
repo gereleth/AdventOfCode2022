@@ -1,4 +1,5 @@
 import argparse
+import time
 
 
 def init_argparse() -> argparse.ArgumentParser:
@@ -38,11 +39,13 @@ if __name__ == "__main__":
         if args.day is not None:
             days = [args.day]
         else:
-            days = list(range(1, 7)) + [21, 22]
+            days = list(range(1, 7)) + [21, 22, 23]
         for day in days:
             if args.test:
                 args.input = f"inputs/day{day}/test.txt"
             else:
                 args.input = f"inputs/day{day}/task.txt"
+            t0 = time.perf_counter()
             run_day(day, args.input)
-            print("---")
+            t1 = time.perf_counter()
+            print(f"--- done in {t1-t0:.3f} s")
