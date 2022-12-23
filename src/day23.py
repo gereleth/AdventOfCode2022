@@ -27,11 +27,11 @@ def parse_board(text):
     lines = text.split("\n")
     H = len(lines)
     W = len(lines[0])
-    board = np.zeros((3 * H, 3 * W), dtype=np.int8)
+    board = np.zeros((2 + H, 2 + W), dtype=np.int8)
     for y, line in enumerate(lines):
         for x, char in enumerate(line):
             if char == "#":
-                board[H + y, W + x] = ELF
+                board[1 + y, 1 + x] = ELF
     return board
 
 
@@ -122,12 +122,42 @@ def simulate(board, rounds=0):
         # move if noone else is moving there
         destination_counts = Counter((m[2], m[3]) for m in moves)
         moved = False
+        extend_directions = set()  # in case we get outside initial bounds
         for y0, x0, y1, x1 in moves:
             if destination_counts[(y1, x1)] > 1:
                 continue
             board[y0, x0] -= ELF
             board[y1, x1] += ELF
             moved = True
+            if y1 == 0:
+                extend_directions.add(NORTH)
+            if y1 == board.shape[0] - 1:
+                extend_directions.add(SOUTH)
+            if x1 == 0:
+                extend_directions.add(WEST)
+            if x1 == board.shape[1] - 1:
+                extend_directions.add(EAST)
+
+        # extend the borders if necessary:
+        if len(extend_directions) > 0:
+            rows = max(20, board.shape[0] // 2)
+            rows_above = rows if NORTH in extend_directions else 0
+            rows_below = rows if SOUTH in extend_directions else 0
+            cols = max(20, board.shape[1] // 2)
+            cols_left = cols if WEST in extend_directions else 0
+            cols_right = cols if EAST in extend_directions else 0
+            new_board = np.zeros(
+                (
+                    board.shape[0] + rows_above + rows_below,
+                    board.shape[1] + cols_left + cols_right,
+                ),
+                dtype=board.dtype,
+            )
+            new_board[
+                rows_above : rows_above + board.shape[0],
+                cols_left : cols_left + board.shape[1],
+            ] = board
+            board = new_board
 
         # switch directions order for the next round
         d = (d + 1) % 4
