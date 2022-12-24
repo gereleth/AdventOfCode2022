@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/src/solve.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["--day", "20", "--test"]
+            "args": ["--day", "19", "--test"]
         },
         {
             "name": "AoC: run on task input",
@@ -17,7 +17,7 @@
             "program": "${workspaceFolder}/src/solve.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["--day", "20"]
+            "args": ["--day", "19"]
         }
     ]
 }
