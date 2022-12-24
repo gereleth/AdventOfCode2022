@@ -8,6 +8,7 @@ import matplotlib.animation as animation
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
 from collections import namedtuple, defaultdict
+from matplotlib import rcParams
 import heapq
 
 NORTH = 0
@@ -249,18 +250,16 @@ def visualize(text_input):
     snowcolor = "white"
     wallcolor = "silver"
     markercolor = "C1"
-    scale = 0.4
-    fig, ax = plt.subplots(
-        figsize=(scale * (width + 2), scale * (height + 2)), facecolor=bgcolor
-    )
+    px = 1 / rcParams["figure.dpi"]
+    fig, ax = plt.subplots(figsize=(1920 * px, 1080 * px), facecolor=bgcolor)
     ax.set(facecolor=bgcolor)
     ax.axis("off")
     ax.invert_yaxis()
     (marker,) = ax.plot(
-        xx[:1], yy[:1], color=markercolor, zorder=10, lw=0, marker="o", ms=20
+        xx[:1], yy[:1], color=markercolor, zorder=10, lw=0, marker="o", ms=10
     )
-    (there_path,) = ax.plot(xx[:1], yy[:1], "-", color="C1", zorder=5, lw=4, alpha=0.8)
-    (back_path,) = ax.plot(xx[:1], yy[:1], "-", color="C8", zorder=5, lw=4, alpha=0.8)
+    (there_path,) = ax.plot(xx[:1], yy[:1], "-", color="C8", zorder=5, lw=4, alpha=0.8)
+    (back_path,) = ax.plot(xx[:1], yy[:1], "-", color="C1", zorder=5, lw=4, alpha=0.8)
     (again_path,) = ax.plot(xx[:1], yy[:1], "-", color="C3", zorder=5, lw=4, alpha=0.8)
     wind_markers = {}
     for wind_direction in [NORTH, SOUTH, EAST, WEST]:
@@ -269,7 +268,7 @@ def visualize(text_input):
             wind_steps[0][wind_direction][1],
             color=snowcolor,
             lw=0,
-            ms=9,
+            ms=4,
             marker="o",  # PATHCHARS[wind_direction],
             alpha=0.6,
         )
@@ -284,6 +283,7 @@ def visualize(text_input):
     ax.add_collection(PatchCollection(patches, match_original=True, zorder=7))
     ax.autoscale_view()
     ax.axis("equal")
+    fig.subplots_adjust(left=0.0, right=1.0)
 
     def animate(i):
         marker.set(
