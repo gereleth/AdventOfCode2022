@@ -3,6 +3,8 @@
 
 from sympy import Symbol, solveset
 
+day_title = "Monkey Math"
+
 
 def parse_input(text_input):
     values = {}
@@ -59,11 +61,3 @@ def part2(text_input):
     equation = yell("root")
     result = next(iter(solveset(equation)))
     return int(result)
-
-
-def run(input_path):
-    print("Day 21: Monkey Math")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

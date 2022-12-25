@@ -1,6 +1,8 @@
 # Day 4: Camp Cleanup
 # Problem statement: https://adventofcode.com/2022/day/4
 
+day_title = "Camp Cleanup"
+
 
 def part1(text_input):
     total = 0
@@ -26,11 +28,3 @@ def part2(text_input):
         if x2 >= y1:
             total += 1
     return total
-
-
-def run(input_path):
-    print("Day  4: Camp Cleanup")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

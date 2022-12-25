@@ -6,6 +6,8 @@ from collections import namedtuple
 import heapq
 import re
 
+day_title = "Not Enough Minerals"
+
 BLUEPRINT_REGEX = re.compile(
     r"Blueprint (\d+): Each ore robot costs (\d+) ore. Each clay robot costs (\d+) ore. Each obsidian robot costs (\d+) ore and (\d+) clay. Each geode robot costs (\d+) ore and (\d+) obsidian."
 )
@@ -228,11 +230,3 @@ def part2(text_input):
         best_geodes, _ = most_geodes(blueprint, 32)
         total *= best_geodes
     return total
-
-
-def run(input_path):
-    print("Day 19: Not Enough Minerals")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

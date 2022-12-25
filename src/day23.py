@@ -5,6 +5,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from collections import Counter
 
+day_title = "Unstable Diffusion"
+
 EMPTY = 0
 ELF = 1
 
@@ -177,11 +179,3 @@ def part2(text_input):
     board = parse_board(text_input)
     board, iteration = simulate(board, rounds=0)
     return iteration
-
-
-def run(input_path):
-    print("Day 23: Unstable Diffusion")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

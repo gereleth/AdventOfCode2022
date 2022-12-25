@@ -23,7 +23,15 @@ def init_argparse() -> argparse.ArgumentParser:
 
 def run_day(day, input_path):
     solution = __import__(f"day{day}")
-    solution.run(input_path)
+    print(f"Day {day:2>}: {solution.day_title}")
+    with open(input_path) as f:
+        content = f.read().rstrip()
+    t0 = time.perf_counter()
+    answer1 = solution.part1(content)
+    t1 = time.perf_counter()
+    answer2 = solution.part2(content)
+    t2 = time.perf_counter()
+    return (answer1, t1 - t0), (answer2, t2 - t0)
 
 
 if __name__ == "__main__":
@@ -45,7 +53,5 @@ if __name__ == "__main__":
                 args.input = f"inputs/day{day}/test.txt"
             else:
                 args.input = f"inputs/day{day}/task.txt"
-            t0 = time.perf_counter()
-            run_day(day, args.input)
-            t1 = time.perf_counter()
-            print(f"--- done in {t1-t0:.3f} s")
+            for i, (answer, t) in enumerate(run_day(day, args.input)):
+                print(f"Part {i+1}: {answer} ({t:.3f} s)")

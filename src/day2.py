@@ -1,6 +1,8 @@
 # Day 2: Rock Paper Scissors
 # Problem statement: https://adventofcode.com/2022/day/2
 
+day_title = "Rock Paper Scissors"
+
 R = "rock"
 P = "paper"
 S = "scissors"
@@ -54,11 +56,3 @@ def part2(text_input):
         my_shape = my_moves[(their_shape, outcome)]
         total += shape_scores[my_shape] + outcome_scores[outcome]
     return total
-
-
-def run(input_path):
-    print("Day  2: Rock Paper Scissors")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

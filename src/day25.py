@@ -67,15 +67,6 @@ def part2(text_input):
     return "no task here"
 
 
-def run(input_path):
-    print(f"Day 25: {day_title}")
-    with open(input_path) as f:
-        content = f.read()
-    # test()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))
-
-
 def test():
     for number in range(0, 2000):
         snafu = decimal_to_snafu(number)

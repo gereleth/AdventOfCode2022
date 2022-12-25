@@ -1,6 +1,8 @@
 # Day 6: Tuning Trouble
 # Problem statement: https://adventofcode.com/2022/day/5
 
+day_title = "Tuning Trouble"
+
 
 def find_marker(text, nunique=4):
     text = text.strip()
@@ -17,11 +19,3 @@ def part1(text_input):
 
 def part2(text_input):
     return find_marker(text_input, nunique=14)
-
-
-def run(input_path):
-    print("Day  6: Tuning Trouble")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

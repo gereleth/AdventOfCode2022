@@ -8,6 +8,8 @@ from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
 import re
 
+day_title = "Monkey Map"
+
 EMPTY = 0
 VOID = -1
 WALL = 1
@@ -289,12 +291,3 @@ def visualize(text_input):
     ani.save("day_22.mp4", writer=writer)
 
     plt.show()
-
-
-def run(input_path):
-    print("Day 22: Monkey Map")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))
-    # visualize(content)

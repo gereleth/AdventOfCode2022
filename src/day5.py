@@ -3,6 +3,8 @@
 
 from collections import namedtuple
 
+day_title = "Supply Stacks"
+
 
 def parse_stacks(stacks):
     lines = stacks.split("\n")
@@ -39,11 +41,3 @@ def part2(text_input):
         elems = [stacks[from_stack].pop() for _ in range(num)]
         stacks[to_stack].extend(reversed(elems))
     return "".join(stack[-1] for stack in stacks)
-
-
-def run(input_path):
-    print("Day  5: Supply Stacks")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

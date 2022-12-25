@@ -1,6 +1,8 @@
 # Day 1: Calorie Counting
 # Problem statement: https://adventofcode.com/2022/day/1
 
+day_title = "Calorie Counting"
+
 
 def part1(text_input):
     max_calories = 0
@@ -20,11 +22,3 @@ def part2(text_input):
             top3.append(calories)
             top3 = sorted(top3)[-3:]
     return sum(top3)
-
-
-def run(input_path):
-    print("Day  1: Calorie Counting")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

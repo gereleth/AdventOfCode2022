@@ -1,6 +1,8 @@
 # Day 20: Grove Positioning System
 # Problem statement: https://adventofcode.com/2022/day/20
 
+day_title = "Grove Positioning System"
+
 
 def mix(ls):
     moved = 0
@@ -46,11 +48,3 @@ def part2(text_input):
         ls = mix(ls)
     ls = [m[0] for m in ls]
     return get_answer(ls)
-
-
-def run(input_path):
-    print("Day 20: Grove Positioning System")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

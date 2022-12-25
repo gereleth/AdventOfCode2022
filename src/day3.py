@@ -1,6 +1,8 @@
 # Day 3: Rucksack Reorganization
 # Problem statement: https://adventofcode.com/2022/day/3
 
+day_title = "Rucksack Reorganization"
+
 
 def symbol_score(symbol):
     # ord('a') to ord('z') is 97 to 122
@@ -32,11 +34,3 @@ def part2(text_input):
             total += symbol_score(symbol)
             group = []
     return total
-
-
-def run(input_path):
-    print("Day  3: Rucksack Reorganization")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))

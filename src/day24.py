@@ -11,6 +11,8 @@ from collections import namedtuple, defaultdict
 from matplotlib import rcParams
 import heapq
 
+day_title = "Blizzard Basin"
+
 NORTH = 0
 EAST = 1
 SOUTH = 2
@@ -203,15 +205,6 @@ def part2(text_input):
     back = find_best_path(winds, finish, start, len(there) - 1)
     again = find_best_path(winds, start, finish, len(there) + len(back) - 1)
     return len(there) + len(back) + len(again)
-
-
-def run(input_path):
-    print("Day 24: Blizzard Basin")
-    with open(input_path) as f:
-        content = f.read()
-    print("Part 1:", part1(content))
-    print("Part 2:", part2(content))
-    # visualize(content)
 
 
 def visualize(text_input):
