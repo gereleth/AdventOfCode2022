@@ -24,35 +24,29 @@ def snafu_to_decimal(number_string: str):
     return int(num)
 
 
-def snafu_place(number):
-    power = 0
-    max_expressed = 2
-    place = 1
-    while abs(number) > max_expressed:
-        power += 1
-        place *= 5
-        max_expressed += 2 * place
-    quotient = int(round(abs(number) / place)) * (-1 if number < 0 else 1)
-    if abs(quotient) <= 2:
-        remainder = number - place * quotient
-        return power, quotient, remainder
-    raise ValueError(f"number {number} power {power} quotient {quotient}")
-
-
 def decimal_to_snafu(number: int):
+    # single-digit case
     if abs(number) <= 2:
         return num_to_char[number]
-    remainder = number
+    # do I even need to care about negative numbers?..
+    if number < 0:
+        snafu = decimal_to_snafu(abs(number))
+        res = "".join(num_to_char[-char_to_num[char]] for char in snafu)
+        return res
+    # build the snafu number from right to left
+    remaining = number
     snafu = ""
-    recent_power = 0
-    while remainder != 0:
-        power, quotient, remainder = snafu_place(remainder)
-        if recent_power > power + 1:
-            snafu += "0" * (recent_power - power - 1)
-        recent_power = power
-        snafu += num_to_char[quotient]
-    if recent_power > 0:
-        snafu += "0" * recent_power
+    carry = 0
+    while remaining != 0:
+        remaining, last_digit = divmod(remaining, 5)
+        last_digit += carry
+        carry = 0
+        if last_digit >= 3:
+            carry = 1
+            last_digit = last_digit - 5
+        snafu = num_to_char[last_digit] + snafu
+    if carry == 1:
+        snafu = "1" + snafu
     return snafu
 
 
@@ -68,9 +62,15 @@ def part2(text_input):
 
 
 def test():
-    for number in range(0, 2000):
-        snafu = decimal_to_snafu(number)
-        decimal = snafu_to_decimal(snafu)
-        if number != decimal:
-            print(f'ERROR: {number} => "{snafu}" => {decimal}')
-            break
+    for sign in [1, -1]:
+        for number in range(2000):
+            n = number * sign
+            snafu = decimal_to_snafu(n)
+            decimal = snafu_to_decimal(snafu)
+            if n != decimal:
+                print(f'ERROR: {n} => "{snafu}" => {decimal}')
+                break
+
+
+if __name__ == "__main__":
+    test()
