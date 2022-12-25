@@ -23,7 +23,7 @@ def init_argparse() -> argparse.ArgumentParser:
 
 def run_day(day, input_path):
     solution = __import__(f"day{day}")
-    print(f"Day {day:2>}: {solution.day_title}")
+    print(f"Day {day:>2}: {solution.day_title}")
     with open(input_path) as f:
         content = f.read().rstrip()
     t0 = time.perf_counter()
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         if args.day is not None:
             days = [args.day]
         else:
-            days = list(range(1, 7)) + list(range(19, 26))
+            days = list(range(1, 8)) + list(range(19, 26))
         for day in days:
             if args.test:
                 args.input = f"inputs/day{day}/test.txt"
