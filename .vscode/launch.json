@@ -1,23 +1,31 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "AoC: run on test input",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/solve.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--day", "7", "--test"]
-        },
-        {
-            "name": "AoC: run on task input",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/solve.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["--day", "7"]
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "AoC: run on test input",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/solve.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["--day", "8", "--test"]
+    },
+    {
+      "name": "AoC: run on task input",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/solve.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["--day", "8"]
+    }
+  ]
 }
