@@ -1,6 +1,7 @@
 # Day 8: Treetop Tree House
 # Problem statement: https://adventofcode.com/2022/day/8
 
+from pathlib import Path
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
@@ -167,6 +168,7 @@ def visualize(text_input: str, crop_size=0):
 
 
 if __name__ == "__main__":
-    with open("inputs/day8/task.txt") as f:
+    folder = Path(__file__).parent.parent
+    with open(folder / "inputs" / "day8" / "task.txt") as f:
         content = f.read()
     visualize(content.rstrip(), crop_size=20)
