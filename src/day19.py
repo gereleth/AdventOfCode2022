@@ -61,30 +61,31 @@ class Factory:
 
     def geodes_upper_bound(self, state: FactoryState):
         """Can make no more than this many geodes from this state.
-        Only consider time-based constraints and disregard most resource constraints.
+
+        Suppose resources are not consumed when building robots.
+        So we only have to save up enough resources for the first build of every robot kind.
         """
-        geodes = state.geodes
         ore = state.ore
         clay = state.clay
         obsi = state.obsidian
         r_ore = state.ore_robots
         r_clay = state.clay_robots
         r_obsi = state.obsidian_robots
-        r_geo = 0
         turns = state.turns
         while turns > 0:
             turns -= 1
             ore += r_ore
             clay += r_clay
             obsi += r_obsi
-            geodes += r_geo
-            if r_clay == 0 or clay < self.blueprint.obsidian_robot_cost_clay:
+            if r_clay == 0 and ore < self.blueprint.clay_robot_cost:
+                r_ore += 1
+            elif r_clay == 0 or clay < self.blueprint.obsidian_robot_cost_clay:
                 r_clay += 1
             elif r_obsi == 0 or obsi < self.blueprint.geode_robot_cost_obsidian:
                 r_obsi += 1
             else:
-                r_geo += 1
-        return geodes
+                return state.geodes + sum(i + 1 for i in range(turns))
+        return state.geodes
 
     def explore_next_crafts(self, state: FactoryState):
         if state.ore_robots < self.max_ore_need:
