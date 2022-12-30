@@ -1,4 +1,4 @@
-# Day 14: Boiling Boulders
+# Day 18: Boiling Boulders
 # Problem statement: https://adventofcode.com/2022/day/18
 
 import math
