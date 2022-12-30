@@ -49,36 +49,46 @@ You can see them by running
 python src/dayX.py
 ```
 
-<div style="display: flex; column-gap: 20px; row-gap: 20px; flex-wrap: wrap">
-<div>
-<h3><a href="src/day8.py">Day 8</a></h3>
-<a href="outputs/day8.png"><img src="outputs/day8.png" height="200"></a>
-</div>
-<div>
-<h3><a href="src/day9.py">Day 9</a></h3>
-<a href="outputs/day9.png"><img src="outputs/day9.png" height="200"></a>
-</div>
-<div>
-<h3><a href="src/day10.py">Day 10</a></h3>
-<a href="outputs/day10.png"><img src="outputs/day10.png" height="200"></a>
-</div>
-<div>
-<h3><a href="src/day12.py">Day 12</a></h3>
-<a href="outputs/day12.png"><img src="outputs/day12.png" height="200"></a>
-</div>
-<div>
-<h3><a href="src/day14.py">Day 14</a></h3>
-<a href="outputs/day14.png"><img src="outputs/day14.png" height="200"></a>
-</div>
-<div>
-<h3><a href="src/day22.py">Day 22</a></h3>
-<a href="outputs/day22.png"><img src="outputs/day22.png" height="200"></a>
-</div>
-<div>
-<h3><a href="src/day24.py">Day 24</a></h3>
-<a href="outputs/day24.png"><img src="outputs/day24.png" height="200"></a>
-</div>
-</div>
+<table>
+    <tr>
+        <td>
+            <h3><a href="src/day8.py">Day 8</a></h3>
+            <a href="outputs/day8.png"><img src="outputs/day8.png" height="200"></a>
+        </td>
+        <td>
+            <h3><a href="src/day9.py">Day 9</a></h3>
+            <a href="outputs/day9.png"><img src="outputs/day9.png" height="200"></a>
+        </td>
+        <td>
+            <h3><a href="src/day10.py">Day 10</a></h3>
+            <a href="outputs/day10.png"><img src="outputs/day10.png" height="200"></a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3><a href="src/day12.py">Day 12</a></h3>
+            <a href="outputs/day12.png"><img src="outputs/day12.png" height="200"></a>
+        </td>
+        <td>
+            <h3><a href="src/day14.py">Day 14</a></h3>
+            <a href="outputs/day14.png"><img src="outputs/day14.png" height="200"></a>
+        </td>
+        <td>
+            <h3><a href="src/day22.py">Day 22</a></h3>
+            <a href="outputs/day22.png"><img src="outputs/day22.png" height="200"></a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h3><a href="src/day24.py">Day 24</a></h3>
+            <a href="outputs/day24.png"><img src="outputs/day24.png" height="200"></a>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+    </tr>
+</table>
 
 ## Solve times
 
