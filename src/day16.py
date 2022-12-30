@@ -128,7 +128,11 @@ class Cave:
 
     def have_seen_this_state(self, state):
         gist = tuple(
-            (state.pressure, *sorted((e.turns, e.position) for e in state.explorers))
+            (
+                state.pressure,
+                *sorted((e.turns, e.position) for e in state.explorers),
+                state.closed_valves,
+            )
         )
         if gist in self.seen:
             return True
