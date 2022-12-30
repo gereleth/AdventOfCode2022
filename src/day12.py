@@ -236,6 +236,6 @@ def visualize(text_input: str, iterations_per_frame=10):
 
 if __name__ == "__main__":
     folder = Path(__file__).parent.parent
-    with open(folder / "inputs" / "day12" / "test.txt") as f:
+    with open(folder / "inputs" / "day12" / "task.txt") as f:
         content = f.read().rstrip()
     visualize(content, iterations_per_frame=10)

@@ -2,7 +2,7 @@
 # Problem statement: https://adventofcode.com/2022/day/24
 
 import numpy as np
-
+from pathlib import Path
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.patches import Rectangle
@@ -317,3 +317,10 @@ def visualize(text_input):
     # ani.save("day_24.mp4", writer=writer)
 
     plt.show()
+
+
+if __name__ == "__main__":
+    folder = Path(__file__).parent.parent
+    with open(folder / "inputs" / "day24" / "task.txt") as f:
+        content = f.read().rstrip()
+    visualize(content)

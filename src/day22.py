@@ -1,6 +1,7 @@
 # Day 22: Monkey Map
 # Problem statement: https://adventofcode.com/2022/day/22
 
+from pathlib import Path
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
@@ -251,23 +252,23 @@ def visualize(text_input):
     # Show where cube sides wrap
     # Patches are specific to my task input
     # I was too lazy to draw them in a general way
-    # patches = [
-    #     Rectangle((50 - 0.5, 0 - 0.5 - 3), 50, 3, color="C0"),
-    #     Rectangle((-3 - 0.5, 150 - 0.5), 3, 50, color="C0"),
-    #     Rectangle((50 - 3 - 0.5, 0 - 0.5), 3, 50, color="C1"),
-    #     Rectangle((-3 - 0.5, 100 - 0.5), 3, 50, color="C1"),
-    #     Rectangle((50 - 3 - 0.5, 50 - 0.5), 3, 50, color="C2"),
-    #     Rectangle((0 - 0.5, 100 - 0.5 - 3), 50, 3, color="C2"),
-    #     Rectangle((100 - 0.5, 0 - 0.5 - 3), 50, 3, color="C3"),
-    #     Rectangle((0 - 0.5, 200 - 0.5), 50, 3, color="C3"),
-    #     Rectangle((150 - 0.5, 0 - 0.5), 3, 50, color="C4"),
-    #     Rectangle((100 - 0.5, 100 - 0.5), 3, 50, color="C4"),
-    #     Rectangle((100 - 0.5, 50 - 0.5), 3, 50, color="C2"),
-    #     Rectangle((100 - 0.5, 50 - 0.5), 50, 3, color="C2"),
-    #     Rectangle((50 - 0.5, 150 - 0.5), 3, 50, color="C2"),
-    #     Rectangle((50 - 0.5, 150 - 0.5), 50, 3, color="C2"),
-    # ]
-    # ax.add_collection(PatchCollection(patches, match_original=True))
+    patches = [
+        Rectangle((50 - 0.5, 0 - 0.5 - 3), 50, 3, color="C0"),
+        Rectangle((-3 - 0.5, 150 - 0.5), 3, 50, color="C0"),
+        Rectangle((50 - 3 - 0.5, 0 - 0.5), 3, 50, color="C1"),
+        Rectangle((-3 - 0.5, 100 - 0.5), 3, 50, color="C1"),
+        Rectangle((50 - 3 - 0.5, 50 - 0.5), 3, 50, color="C2"),
+        Rectangle((0 - 0.5, 100 - 0.5 - 3), 50, 3, color="C2"),
+        Rectangle((100 - 0.5, 0 - 0.5 - 3), 50, 3, color="C3"),
+        Rectangle((0 - 0.5, 200 - 0.5), 50, 3, color="C3"),
+        Rectangle((150 - 0.5, 0 - 0.5), 3, 50, color="C4"),
+        Rectangle((100 - 0.5, 100 - 0.5), 3, 50, color="C4"),
+        Rectangle((100 - 0.5, 50 - 0.5), 3, 50, color="C2"),
+        Rectangle((100 - 0.5, 50 - 0.5), 50, 3, color="C2"),
+        Rectangle((50 - 0.5, 150 - 0.5), 3, 50, color="C2"),
+        Rectangle((50 - 0.5, 150 - 0.5), 50, 3, color="C2"),
+    ]
+    ax.add_collection(PatchCollection(patches, match_original=True))
     ax.autoscale_view()
 
     def animate(i):
@@ -287,7 +288,14 @@ def visualize(text_input):
     fig.tight_layout()
     ani = animation.FuncAnimation(fig, animate, interval=10, blit=True, save_count=2000)
 
-    writer = animation.FFMpegWriter(fps=30, metadata=dict(artist="me"), bitrate=1800)
-    ani.save("day_22.mp4", writer=writer)
+    # writer = animation.FFMpegWriter(fps=30, metadata=dict(artist="me"), bitrate=1800)
+    # ani.save("day_22.mp4", writer=writer)
 
     plt.show()
+
+
+if __name__ == "__main__":
+    folder = Path(__file__).parent.parent
+    with open(folder / "inputs" / "day22" / "task.txt") as f:
+        content = f.read().rstrip()
+    visualize(content)
