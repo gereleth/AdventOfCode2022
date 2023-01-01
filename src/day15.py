@@ -1,13 +1,15 @@
-# Day 14: Beacon Exclusion Zone
+# Day 15: Beacon Exclusion Zone
 # Problem statement: https://adventofcode.com/2022/day/15
 
 import re
+from util import Segment1D, Segment1DCollection, Segment2D
 from collections import namedtuple
 
 day_title = "Beacon Exclusion Zone"
 
 
 Point = namedtuple("Point", ["x", "y"])
+
 beacon_regex = re.compile(
     r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)"
 )
@@ -30,7 +32,7 @@ def parse_input(text_input):
 def part1(text_input):
     y = 2000000
     # y = 10
-    impossible = set()
+    impossible = Segment1DCollection([])
     beacons = set()
     sensors_beacons = parse_input(text_input)
     for sensor, beacon in sensors_beacons:
@@ -41,46 +43,55 @@ def part1(text_input):
         dist_bb = manhattan_distance(sensor, bb)
         if dist_bb > dist_beacon:
             continue
-        for d in range(dist_bb - dist_beacon, dist_beacon - dist_bb + 1):
-            impossible.add(sensor.x + d)
-    return len(impossible - beacons)
-
-
-def subtract_range(before, subtract):
-    # inclusive ranges [from, to]
-    # returns list of ranges
-    if before[1] < subtract[0] or before[0] > subtract[1]:
-        return [before]
-    new = []
-    if before[0] < subtract[0]:
-        new.append((before[0], subtract[0] - 1))
-    if subtract[1] < before[1]:
-        new.append((subtract[1] + 1, before[1]))
-    return new
+        dx = dist_beacon - dist_bb
+        impossible += Segment1D(sensor.x - dx, sensor.x + dx)
+    return len(impossible) - sum(b in impossible for b in beacons)
 
 
 def part2(text_input):
-    # blim, ulim = 0, 20
-    blim, ulim = 0, 4000000
+    # L = 20
+    L = 4000000
     sensors_beacons = parse_input(text_input)
-    possible = {x: [(blim, ulim)] for x in range(blim, ulim + 1)}
+
+    # rotate the board 45 degrees and use coordinates (d,p) instead of (x,y)
+    # d = x + y - L
+    # p = x - y
+    # Then areas around sensors are squares
+    # And the total area is a rhombus instead, having abs(d) + abs(p) <= L
+
+    # We begin from full area and subtract impossible rectangles located around sensors
+    # Until only one point remains
+    possible = [Segment2D(-L, L, -L, L)]
+
+    # determine if a rectangle still intersects the rhombus
+    def rectangle_in_range(r):
+        if r.x0 * r.x1 <= 0 or r.y0 * r.y1 <= 0:
+            return True
+        return any(
+            abs(d) + abs(p) <= L
+            for (d, p) in (
+                (r.x0, r.y0),
+                (r.x1, r.y0),
+                (r.x0, r.y1),
+                (r.x1, r.y1),
+            )
+        )
+
     for sensor, beacon in sorted(
-        sensors_beacons, key=lambda x: -manhattan_distance(x[0], x[1])
+        sensors_beacons, key=lambda x: manhattan_distance(x[0], x[1])
     ):
-        dist_beacon = manhattan_distance(sensor, beacon)
-        for dx in range(-dist_beacon, dist_beacon + 1):
-            x = sensor.x + dx
-            if x < blim or x > ulim or x not in possible:
-                continue
-            y0 = max(blim, sensor.y - (dist_beacon - abs(dx)))
-            y1 = min(ulim, sensor.y + dist_beacon - abs(dx))
-            poss = possible.pop(x)
-            newposs = []
-            for part in poss:
-                for res in subtract_range(part, (y0, y1)):
-                    newposs.append(res)
-            if len(newposs) > 0:
-                possible[x] = newposs
-    x, yy = possible.popitem()
-    y = yy[0][0]
+        radius = manhattan_distance(sensor, beacon)
+        d0 = sensor.x + sensor.y - L
+        p0 = sensor.x - sensor.y
+        exclude = Segment2D(d0 - radius, d0 + radius, p0 - radius, p0 + radius)
+        possible = [
+            res
+            for rectangle in possible
+            for res in rectangle.difference(exclude)
+            if rectangle_in_range(res)
+        ]
+    rect = possible[0]
+    d, p = rect.x0, rect.y0
+    x = (L + d + p) // 2
+    y = x - p
     return 4000000 * x + y

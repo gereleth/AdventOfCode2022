@@ -92,8 +92,8 @@ python src/dayX.py
 
 ## Solve times
 
-Solve times from a single run on my computer. My worst performing day is apparently day 15 - Beacon Exclusion Zone. It takes a whole minute.
+Solve times from a single run on my computer.
 
-Days 20 and 24 could use some improvements too.
+Days 20 and 24 could use some improvements.
 
 ![Solve times horizontal bar chart](outputs/time_stats.png)
