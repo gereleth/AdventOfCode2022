@@ -94,6 +94,6 @@ python src/dayX.py
 
 Solve times from a single run on my computer.
 
-Days 20 and 24 could use some improvements.
+Day 24 could use some improvements.
 
 ![Solve times horizontal bar chart](outputs/time_stats.png)
