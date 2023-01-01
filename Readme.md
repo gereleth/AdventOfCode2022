@@ -92,8 +92,6 @@ python src/dayX.py
 
 ## Solve times
 
-Solve times from a single run on my computer.
-
-Day 24 could use some improvements.
+Solve times from a single run on my computer. Available also as a [csv file](outputs/time_stats.csv).
 
 ![Solve times horizontal bar chart](outputs/time_stats.png)

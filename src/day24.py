@@ -1,6 +1,7 @@
 # Day 24: Blizzard Basin
 # Problem statement: https://adventofcode.com/2022/day/24
 
+import math
 import numpy as np
 from pathlib import Path
 from matplotlib import pyplot as plt
@@ -64,6 +65,7 @@ class Winds:
         self.xmax = xmax
         self.ymin = ymin
         self.ymax = ymax
+        self.period = math.lcm(xmax - xmin + 1, ymax - ymin + 1)
 
     def _winds_flow(self):
         pos = defaultdict(set)
@@ -83,11 +85,11 @@ class Winds:
         self.pos = pos
 
     def get_free_spots(self, turn):
+        turn = turn % self.period
         if turn < len(self.free_spots_cache):
             return self.free_spots_cache[turn]
         while turn >= len(self.free_spots_cache):
             self._winds_flow()
-            # print(self.flows_str())
             free = set(((self.xmax, self.ymax + 1), (self.xmin, self.ymin - 1)))
             for x in range(self.xmin, self.xmax + 1):
                 for y in range(self.ymin, self.ymax + 1):
@@ -97,10 +99,6 @@ class Winds:
         return self.free_spots_cache[turn]
 
     def is_free(self, pos):
-        if (pos.x, pos.y) == (self.xmin, self.ymin - 1):
-            return True
-        if (pos.x, pos.y) == (self.xmax, self.ymax + 1):
-            return True
         free = self.get_free_spots(pos.turn)
         return (pos.x, pos.y) in free
 
@@ -142,45 +140,36 @@ def find_best_path(winds, source, target, start_turn):
     queue = [(0, 0, SearchPosition(*source, start_turn), "")]
     heapq.heapify(queue)
     it = 0
-    best_turns = -np.Inf
+    best_turns = np.Inf
     best_path = ""
     visited = set()
-    distance_x = abs(target[0] - source[0])
-    distance_y = abs(target[1] - source[1])
 
     while len(queue) > 0:
         it += 1
-        priority, _, pos, path = heapq.heappop(queue)
+        lb, _, pos, path = heapq.heappop(queue)
+        if lb >= best_turns:
+            continue
         turn = pos.turn + 1
-        # print(f"Best {-best_turns} Options {len(queue)} Current {-priority} {pos}")
         for direction, (dy, dx) in DELTAS.items():
             npos = SearchPosition(pos.x + dx, pos.y + dy, turn)
             if npos in visited:
                 continue
             if (npos.x, npos.y) == target:
-                if turn < -best_turns:
-                    best_turns = -turn
+                if turn < best_turns:
+                    best_turns = turn
                     best_path = path + PATHCHARS[direction]
-                    # print("BEST PATH", best_path, len(best_path), len(queue))
             elif winds.is_free(npos):
                 newpath = path + PATHCHARS[direction]
                 still_need_x = abs(target[0] - npos.x)
                 still_need_y = abs(target[1] - npos.y)
-                if npos.turn - start_turn + still_need_x + still_need_y >= -best_turns:
-                    # print(f"\tposition {newpos} abandoned as useless")
+                lb = npos.turn + still_need_x + still_need_y
+                if lb >= best_turns:
                     continue
-                # print(
-                #     f"\tpush new position {MOVECHARS[direction]} {-priority} {newpos}"
-                # )
                 visited.add(npos)
-                priority = -(
-                    (distance_x - still_need_x + distance_y - still_need_y) * 1000
-                    - (turn - start_turn)
-                )
-                heapq.heappush(queue, (priority, it, npos, newpath))
+                heapq.heappush(queue, (lb, it, npos, newpath))
         # if it % 10000 == 0:
         #     print(
-        #         f"it={it}\tqueue={len(queue)}\tbest={len(best_path)}\tvisited={len(visited)}"
+        #         f"it={it}\tqueue={len(queue)}\tbest={len(best_path)}\tlb={queue[0][0]}\tvisited={len(visited)}"
         #     )
     return best_path
 
