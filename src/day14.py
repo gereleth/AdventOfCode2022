@@ -27,15 +27,16 @@ class Cave:
                         self.cave[Point(x, y)] = "rock"
         self.maxy = max(point.y for point in self.cave.keys())
         self.floor = floor
+        self.fall_route = [self.start]
 
-    def drop_sand_grain(self, yield_intermediate_positions=False):
+    def drop_sand_grain(self):
         abyss = False
         atrest = False
-        point = self.start
-        if yield_intermediate_positions:
-            yield point
+        if len(self.fall_route) == 0:
+            return None
         while not atrest:
             atrest = True
+            point = self.fall_route[-1]
             for dx in (0, -1, 1):
                 move_option = Point(point.x + dx, point.y + 1)
                 if not self.floor and move_option.y > self.maxy:
@@ -44,20 +45,19 @@ class Cave:
                 if move_option not in self.cave and move_option.y < self.maxy + 2:
                     point = move_option
                     atrest = False
-                    if yield_intermediate_positions:
-                        yield point
+                    self.fall_route.append(point)
                     break
             if abyss:
-                yield None
-                return
+                return None
+        point = self.fall_route.pop()
         self.cave[point] = "sand"
-        yield point
+        return point
 
 
 def part1(text_input):
     cave = Cave(text_input, floor=False)
     sand = 0
-    while next(cave.drop_sand_grain()) is not None:
+    while cave.drop_sand_grain() is not None:
         sand += 1
     return sand
 
@@ -65,7 +65,7 @@ def part1(text_input):
 def part2(text_input):
     cave = Cave(text_input, floor=True)
     sand = 0
-    while next(cave.drop_sand_grain()) != cave.start:
+    while cave.drop_sand_grain() != cave.start:
         sand += 1
     return sand + 1  # +1 because start point isn't counted yet
 
@@ -117,21 +117,21 @@ def visualize(text_input: str):
             return (trail,)
         else:
             todo = max(len(circles) // 100, 1) if cave.floor else 1
-            path = []
             for _ in range(todo):
-                path = list(cave.drop_sand_grain(yield_intermediate_positions=True))
-                if path[-1] is None:
+                point = cave.drop_sand_grain()
+                if point is None:
                     cave.floor = True
                 elif not done:
                     circle = ax.add_artist(
-                        Circle(
-                            path[-1], radius=0.5, fc="#996" if cave.floor else "#cc8"
-                        )
+                        Circle(point, radius=0.5, fc="#996" if cave.floor else "#cc8")
                     )
                     circles.append(circle)
-                    done = path[0] == path[-1]
+                    done = point == cave.start
 
-            trail.set(xdata=[p.x for p in path[:-1]], ydata=[p.y for p in path[:-1]])
+            trail.set(
+                xdata=[p.x for p in cave.fall_route],
+                ydata=[p.y for p in cave.fall_route],
+            )
 
         return (trail, *circles)
 
